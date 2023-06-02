@@ -68,7 +68,6 @@ public class TeamService {
         // Create a new TeamPlayer entity
         TeamPlayer newPlayer = new TeamPlayer();
         newPlayer.setUser(userRepository.findById(playerAddRequestDto.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
-        newPlayer.setTeam(team);
         newPlayer.setJerseyNumber(playerAddRequestDto.getJerseyNumber());
 
         // Save the new player to the database
@@ -143,7 +142,6 @@ public class TeamService {
 
         TeamLeader teamLeader = new TeamLeader();
         teamLeader.setUser(user);
-        teamLeader.setTeam(team);
 
         // User'ın rolünün güncellenmesi
         if (user.getRole() != Role.SISTEM_YONETICISI) {

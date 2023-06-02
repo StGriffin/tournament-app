@@ -16,18 +16,12 @@ public class Team {
     @Column(name = "TEAM_ID")
     private Long id;
 
-    @JsonBackReference
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TOURNAMENT_ID")
-    private Tournament tournament;
-
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TEAM_LEADER_ID")
     private TeamLeader teamLeader;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "TEAM_ID")
     private List<TeamPlayer> players;
 
     @Column(name = "NAME")

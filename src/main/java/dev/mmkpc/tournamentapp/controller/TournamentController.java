@@ -1,6 +1,7 @@
 package dev.mmkpc.tournamentapp.controller;
 
 import dev.mmkpc.tournamentapp.dto.TournamentCreationDto;
+import dev.mmkpc.tournamentapp.dto.TournamentUpdateDto;
 import dev.mmkpc.tournamentapp.model.Tournament;
 import dev.mmkpc.tournamentapp.repository.TournamentRepository;
 import dev.mmkpc.tournamentapp.service.TournamentService;
@@ -45,4 +46,17 @@ public class TournamentController {
         }
     }
 
+
+    @PutMapping("/updateTournament")
+    public ResponseEntity<?> updateTournament(@RequestBody TournamentUpdateDto tournamentUpdateDto) {
+
+        try {
+            tournamentService.updateTournament(tournamentUpdateDto);
+            return ResponseEntity.ok("Turnuva başarıyla güncellendi");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+
+    }
 }

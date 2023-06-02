@@ -20,10 +20,6 @@ public class TeamPlayer {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
-
     @Column(name = "JERSEY_NUMBER")
     private int jerseyNumber;
 

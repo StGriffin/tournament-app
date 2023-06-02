@@ -1,11 +1,13 @@
 package dev.mmkpc.tournamentapp.service;
 
 import dev.mmkpc.tournamentapp.dto.TournamentCreationDto;
+import dev.mmkpc.tournamentapp.dto.TournamentUpdateDto;
 import dev.mmkpc.tournamentapp.model.Branch;
 import dev.mmkpc.tournamentapp.model.Team;
 import dev.mmkpc.tournamentapp.model.Tournament;
 import dev.mmkpc.tournamentapp.repository.TeamRepository;
 import dev.mmkpc.tournamentapp.repository.TournamentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,12 +51,6 @@ public class TournamentService {
         }
         tournamentRepository.deleteById(tournamentId);
 
-        List<Team> teams = teamRepository.findTeamsByTournamentId(tournamentId);
-
-        for (Team team : teams) {
-            team.setTournament(null);
-            teamRepository.save(team);
-        }
     }
 
     public List<Team> getAllParticipatingTeams() {
@@ -68,4 +64,18 @@ public class TournamentService {
         return participatingTeams;
     }
 
+    public void updateTournament(TournamentUpdateDto tournamentUpdateDto) {
+        Tournament tournament = tournamentRepository.findById(tournamentUpdateDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Turnuva bulunamadı"));
+
+        tournament.setYear(tournamentUpdateDto.getYear());
+        tournament.setBranch(tournamentUpdateDto.getBranch());
+        tournament.setTeamPlayerCount(tournamentUpdateDto.getTeamPlayerCount());
+
+        List<Long> teamIds = tournamentUpdateDto.getTeams();
+        List<Team> teams = teamRepository.findAllById(teamIds);
+        tournament.setTeams(teams);
+
+        tournamentRepository.save(tournament);
+    }
 }

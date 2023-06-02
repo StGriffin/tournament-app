@@ -21,13 +21,6 @@ public class TeamLeader{
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PLAYER_ID")
-    private TeamPlayer teamPlayer;
 
     // Getter ve Setter metotları
 }

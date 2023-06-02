@@ -27,9 +27,8 @@ public class Tournament {
     @Column(name = "BRANCH")
     private Branch branch;
 
-    @ToString.Exclude
-//    @JsonManagedReference
-    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "TOURNAMENT_ID")
     private List<Team> teams;
 
     @Column(name = "TEAM_PLAYER_COUNT")
