@@ -21,6 +21,7 @@ public class TournamentController {
 
     @GetMapping
     public List<Tournament> getAllTournaments() {
+
         return tournamentService.getAllTournaments();
     }
 

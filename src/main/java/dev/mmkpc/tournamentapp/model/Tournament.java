@@ -1,9 +1,11 @@
 package dev.mmkpc.tournamentapp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class Tournament {
     @Column(name = "BRANCH")
     private Branch branch;
 
+    @ToString.Exclude
+//    @JsonManagedReference
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
     private List<Team> teams;
 

@@ -2,11 +2,13 @@ package dev.mmkpc.tournamentapp.service;
 
 import dev.mmkpc.tournamentapp.dto.TournamentCreationDto;
 import dev.mmkpc.tournamentapp.model.Branch;
+import dev.mmkpc.tournamentapp.model.Team;
 import dev.mmkpc.tournamentapp.model.Tournament;
+import dev.mmkpc.tournamentapp.repository.TeamRepository;
 import dev.mmkpc.tournamentapp.repository.TournamentRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,9 +16,11 @@ import java.util.List;
 public class TournamentService {
 
     private final TournamentRepository tournamentRepository;
+    private final TeamRepository teamRepository;
 
-    public TournamentService(TournamentRepository tournamentRepository) {
+    public TournamentService(TournamentRepository tournamentRepository, TeamRepository teamRepository) {
         this.tournamentRepository = tournamentRepository;
+        this.teamRepository = teamRepository;
     }
 
     public void createTournament(TournamentCreationDto tournament) {
@@ -44,5 +48,24 @@ public class TournamentService {
             throw new RuntimeException("Bu branş için zaten bir turnuva düzenlenmiş.");
         }
         tournamentRepository.deleteById(tournamentId);
+
+        List<Team> teams = teamRepository.findTeamsByTournamentId(tournamentId);
+
+        for (Team team : teams) {
+            team.setTournament(null);
+            teamRepository.save(team);
+        }
     }
+
+    public List<Team> getAllParticipatingTeams() {
+        List<Tournament> tournaments = tournamentRepository.findAll();
+        List<Team> participatingTeams = new ArrayList<>();
+
+        for (Tournament tournament : tournaments) {
+            participatingTeams.addAll(tournament.getTeams());
+        }
+
+        return participatingTeams;
+    }
+
 }

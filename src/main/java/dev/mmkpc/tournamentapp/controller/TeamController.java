@@ -81,5 +81,11 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting candidate team leaders: " + e.getMessage());
         }
     }
+
+    @GetMapping("/availableTeams")
+    public ResponseEntity<List<Team>> getAllAvailableTeams() {
+        List<Team> teams = teamService.getAllAvailableTeams();
+        return ResponseEntity.ok(teams);
+    }
 }
 

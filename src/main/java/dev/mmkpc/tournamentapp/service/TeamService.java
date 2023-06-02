@@ -25,17 +25,31 @@ public class TeamService {
     private final TeamLeaderRepository teamLeaderRepository;
     private final UserRepository userRepository;
 
+    private final TournamentService tournamentService;
+
 
     @Autowired
-    public TeamService(TeamRepository teamRepository, TeamPlayerRepository teamPlayerRepository, TeamLeaderRepository teamLeaderRepository, UserRepository userRepository) {
+    public TeamService(TeamRepository teamRepository, TeamPlayerRepository teamPlayerRepository, TeamLeaderRepository teamLeaderRepository, UserRepository userRepository, TournamentService tournamentService) {
         this.teamRepository = teamRepository;
         this.teamPlayerRepository = teamPlayerRepository;
         this.teamLeaderRepository = teamLeaderRepository;
         this.userRepository = userRepository;
+        this.tournamentService = tournamentService;
     }
 
     public List<Team> getAllTeams() {
         return teamRepository.findAll();
+    }
+
+
+    public List<Team> getAllAvailableTeams() {
+        List<Team> allTeams = teamRepository.findAll();
+        List<Team> participatingTeams = tournamentService.getAllParticipatingTeams();
+
+        // Turnuvaya katılan takımları filtrele
+        allTeams.removeAll(participatingTeams);
+
+        return allTeams;
     }
 
     public Team createTeam(Team team) {
