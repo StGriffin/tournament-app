@@ -2,6 +2,7 @@ package dev.mmkpc.tournamentapp.controller;
 
 import dev.mmkpc.tournamentapp.dto.PlayerAddRequestDto;
 import dev.mmkpc.tournamentapp.dto.PlayerDeleteRequest;
+import dev.mmkpc.tournamentapp.dto.TeamUpdateDto;
 import dev.mmkpc.tournamentapp.dto.UserDto;
 import dev.mmkpc.tournamentapp.model.Team;
 import dev.mmkpc.tournamentapp.service.TeamService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/teams")
@@ -86,6 +88,25 @@ public class TeamController {
     public ResponseEntity<List<Team>> getAllAvailableTeams() {
         List<Team> teams = teamService.getAllAvailableTeams();
         return ResponseEntity.ok(teams);
+    }
+
+
+    @GetMapping("/availableUsers")
+    public ResponseEntity<List<UserDto>> getAllAvailableUsers(){
+        List<UserDto> availableUsers = teamService.getAllAvailableUsers();
+        return ResponseEntity.ok(availableUsers);
+    }
+
+    @PutMapping("/updateTeam")
+    public ResponseEntity<String> updateTeamInfo(
+           @RequestBody TeamUpdateDto teamUpdateDto
+    ) {
+        try {
+            teamService.updateTeamInfo(teamUpdateDto);
+            return ResponseEntity.ok("Takım başarıyla güncellendi");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Takım güncellenmesinde bir hata oluştu: " + e.getMessage());
+        }
     }
 }
 

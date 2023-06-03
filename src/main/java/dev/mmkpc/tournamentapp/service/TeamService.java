@@ -2,6 +2,7 @@ package dev.mmkpc.tournamentapp.service;
 
 import dev.mmkpc.tournamentapp.dto.PlayerAddRequestDto;
 import dev.mmkpc.tournamentapp.dto.PlayerDeleteRequest;
+import dev.mmkpc.tournamentapp.dto.TeamUpdateDto;
 import dev.mmkpc.tournamentapp.dto.UserDto;
 import dev.mmkpc.tournamentapp.model.*;
 
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -112,16 +115,24 @@ public class TeamService {
         return count;
     }
 
-    public ResponseEntity<List<UserDto>> getAllAvailableUsers() {
+        public List<UserDto> getAllAvailableUsers() {
         List<TeamPlayer> teamPlayers = teamPlayerRepository.findAll();
         List<Long> userIds = teamPlayers.stream()
                 .map(TeamPlayer::getUser)
                 .map(User::getId)
                 .collect(Collectors.toList());
 
-        List<User> availableUsers = userRepository.findAllByIdNotIn(userIds);
+        List<User> availableUsers;
+        if(userIds.size()==0){
+            availableUsers=userRepository.findAll();
+        }
+
+        else{
+            availableUsers = userRepository.findAllByIdNotIn(userIds);
+        }
+
         List<UserDto> userDTOs = mapUserListToDTO(availableUsers);
-        return ResponseEntity.ok(userDTOs);
+        return userDTOs;
     }
 
     private List<UserDto> mapUserListToDTO(List<User> users) {
@@ -188,6 +199,47 @@ public class TeamService {
         return candidateTeamLeaders.stream()
                 .map(user -> new UserDto(user.getId(),user.getUserName(), user.getFullName(), user.getAge()))
                 .collect(Collectors.toList());
+    }
+
+    public void updateTeamInfo(TeamUpdateDto teamUpdateDto) {
+
+        Long teamId = teamUpdateDto.getTeamId();
+        Team team = teamRepository.findById(teamUpdateDto.getTeamId())
+                .orElseThrow(() -> new IllegalArgumentException("Takım bulunamadı: " + teamId));
+        String teamName = teamUpdateDto.getTeamName();
+        Long teamLeadId = teamUpdateDto.getTeamLeadUserId();
+        List<Long> playerIds = teamUpdateDto.getPlayerIds();
+
+
+        team.setName((teamName));
+        Optional<User> userTeamLead = userRepository.findById(teamLeadId);
+        TeamLeader newTeamLead = new TeamLeader();
+        if (userTeamLead.isPresent()) {
+            if (userTeamLead.get().getRole() != Role.SISTEM_YONETICISI) {
+                userTeamLead.get().setRole(Role.TAKIM_SORUMLUSU);
+            }
+
+            newTeamLead.setUser(userTeamLead.get());
+            teamLeaderRepository.save(newTeamLead);
+            team.setTeamLeader(newTeamLead);
+            userRepository.save(userTeamLead.get());
+        }
+
+
+        List<TeamPlayer> teamPlayers = new ArrayList<>();
+        for (Long playerId : playerIds) {
+            Optional<User> user = userRepository.findById(playerId);
+            if (user.isPresent()) {
+                TeamPlayer teamPlayer = new TeamPlayer();
+                teamPlayer.setUser(user.get());
+                teamPlayers.add(teamPlayer);
+                teamPlayerRepository.save(teamPlayer);
+
+
+            }
+        }
+        team.setPlayers(teamPlayers);
+        teamRepository.save(team);
     }
 }
 

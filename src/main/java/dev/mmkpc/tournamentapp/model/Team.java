@@ -20,7 +20,7 @@ public class Team {
     @JoinColumn(name = "TEAM_LEADER_ID")
     private TeamLeader teamLeader;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "TEAM_ID")
     private List<TeamPlayer> players;
 
