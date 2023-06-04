@@ -1,7 +1,5 @@
 package dev.mmkpc.tournamentapp.service;
 
-import dev.mmkpc.tournamentapp.dto.PlayerAddRequestDto;
-import dev.mmkpc.tournamentapp.dto.PlayerDeleteRequest;
 import dev.mmkpc.tournamentapp.dto.TeamUpdateDto;
 import dev.mmkpc.tournamentapp.dto.UserDto;
 import dev.mmkpc.tournamentapp.model.*;
@@ -11,12 +9,10 @@ import dev.mmkpc.tournamentapp.repository.TeamPlayerRepository;
 import dev.mmkpc.tournamentapp.repository.TeamRepository;
 import dev.mmkpc.tournamentapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,67 +51,38 @@ public class TeamService {
         return allTeams;
     }
 
-    public Team createTeam(Team team) {
-        return teamRepository.save(team);
-    }
+    public void createTeam(String teamName , Long teamLeadId) {
 
-    public void addPlayerToTeam(PlayerAddRequestDto playerAddRequestDto) {
-        Team team = teamRepository.findById(playerAddRequestDto.getTeamId()).orElseThrow(() -> new RuntimeException("Team not found"));
-        List<TeamPlayer> players = team.getPlayers();
+        boolean teamExist = teamRepository.existsByName(teamName);
 
-        // Check if adding the player violates the age limit
-        if (getUserAge(playerAddRequestDto.getUserId()) < 30 && countPlayersBelowAge(players) >= 3) {
-            throw new RuntimeException("Cannot add more than three players below the age of 30.");
-        }
+        if(!teamExist) {
+            Team newTeam = new Team();
+            newTeam.setName(teamName);
 
-        // Create a new TeamPlayer entity
-        TeamPlayer newPlayer = new TeamPlayer();
-        newPlayer.setUser(userRepository.findById(playerAddRequestDto.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
-        newPlayer.setJerseyNumber(playerAddRequestDto.getJerseyNumber());
-
-        // Save the new player to the database
-        teamPlayerRepository.save(newPlayer);
-
-        // Add the new player to the team
-        players.add(newPlayer);
-        team.setPlayers(players);
-
-        teamRepository.save(team);
-    }
-
-    public void removePlayerFromTeam(PlayerDeleteRequest playerDeleteRequest) {
-        Team team = teamRepository.findById(playerDeleteRequest.getTeamId())
-                .orElseThrow(() -> new RuntimeException("Team not found"));
-
-        List<TeamPlayer> players = team.getPlayers();
-        players.removeIf(player -> player.getId().equals(playerDeleteRequest.getPlayerId()));
-
-        team.setPlayers(players);
-
-        // Delete the TeamPlayer entity
-        teamPlayerRepository.deleteById(playerDeleteRequest.getPlayerId());
-
-        teamRepository.save(team);
-    }
-
-    // Helper method to get the age of a user
-    private int getUserAge(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getAge();
-    }
-
-    // Helper method to count the number of players below the age of 30
-    private int countPlayersBelowAge(List<TeamPlayer> players) {
-        int count = 0;
-        for (TeamPlayer player : players) {
-            if (getUserAge(player.getUser().getId()) < 30) {
-                count++;
+            if (teamLeadId != null) {
+                Optional<User> user = userRepository.findById(teamLeadId);
+                if (user.isPresent()) {
+                    if (user.get().getRole() != Role.SISTEM_YONETICISI) {
+                        user.get().setRole(Role.TAKIM_SORUMLUSU);
+                    }
+                    userRepository.save(user.get());
+                    TeamLeader newTeamLeader = new TeamLeader();
+                    newTeamLeader.setUser(user.get());
+                    teamLeaderRepository.save(newTeamLeader);
+                    newTeam.setTeamLeader(newTeamLeader);
+                }
             }
+
+            teamRepository.save(newTeam);
+
         }
-        return count;
+        else{
+            throw new IllegalArgumentException("Aynı ada sahip başka bir takım zaten var: " + teamName);
+        }
     }
 
-        public List<UserDto> getAllAvailableUsers() {
+
+    public List<UserDto> getAllAvailableUsers() {
         List<TeamPlayer> teamPlayers = teamPlayerRepository.findAll();
         List<Long> userIds = teamPlayers.stream()
                 .map(TeamPlayer::getUser)
@@ -142,47 +109,6 @@ public class TeamService {
             userDTOs.add(userDTO);
         }
         return userDTOs;
-    }
-
-    public void addTeamLeaderToTeam(Long teamId, UserDto userDto) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("Team not found"));
-
-        User user = userRepository.findById(userDto.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        TeamLeader teamLeader = new TeamLeader();
-        teamLeader.setUser(user);
-
-        // User'ın rolünün güncellenmesi
-        if (user.getRole() != Role.SISTEM_YONETICISI) {
-            user.setRole(Role.TAKIM_SORUMLUSU);
-        }
-
-        // TeamLeader'ın kaydedilmesi
-        teamLeaderRepository.save(teamLeader);
-        userRepository.save(user);
-
-        // Takımdaki TeamLeader'ın güncellenmesi
-        team.setTeamLeader(teamLeader);
-        teamRepository.save(team);
-    }
-
-    public void removeTeamLeaderFromTeam(Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("Team not found"));
-
-        TeamLeader teamLeader = team.getTeamLeader();
-        if (teamLeader != null) {
-            User user = teamLeader.getUser();
-            if (user.getRole() != Role.SISTEM_YONETICISI) {
-                user.setRole(Role.NORMAL);
-            }
-            team.setTeamLeader(null);
-            userRepository.save(user);
-        }
-
-        teamRepository.save(team);
     }
 
     public List<UserDto> getCandidateTeamLeaders() {

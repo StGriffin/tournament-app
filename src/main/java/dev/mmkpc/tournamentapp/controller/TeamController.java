@@ -28,49 +28,17 @@ public class TeamController {
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Team> createTeam(@RequestBody Team team) {
-        Team createdTeam = teamService.createTeam(team);
-        return new ResponseEntity<>(createdTeam, HttpStatus.CREATED);
-    }
+    @PostMapping("/createTeam")
+    public ResponseEntity<String> createTeam(@RequestBody Map<String, Object> requestData) {
+        String teamName = (String) requestData.get("teamName");
 
-    @PostMapping("/addPlayer")
-    public ResponseEntity<?> addPlayerToTeam(@RequestBody PlayerAddRequestDto playerAddRequestDto) {
+        Long teamLeadId = Long.parseLong(String.valueOf(requestData.get("teamLeadId")));
         try {
-            teamService.addPlayerToTeam(playerAddRequestDto);
-            return ResponseEntity.ok("Oyuncu başarıyla takıma eklendi");
-        } catch (RuntimeException e) {
+            teamService.createTeam(teamName,teamLeadId);
+            return ResponseEntity.ok("Takım başarıyla oluşturuldu");
+        }
+        catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/removePlayer")
-    public ResponseEntity<String> removePlayerFromTeam(@RequestBody PlayerDeleteRequest playerDeleteRequest) {
-        try {
-            teamService.removePlayerFromTeam(playerDeleteRequest);
-            return ResponseEntity.ok("Player removed from the team successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove player from the team.");
-        }
-    }
-
-    @PostMapping("/assignTeamLeader")
-    public ResponseEntity<String> addTeamLeaderToTeam(@PathVariable Long teamId, @RequestBody UserDto userDto) {
-        try {
-            teamService.addTeamLeaderToTeam(teamId, userDto);
-            return ResponseEntity.ok("Team leader added successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding team leader: " + e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/removeTeamLeader")
-    public ResponseEntity<?> removeTeamLeaderFromTeam(@PathVariable Long teamId) {
-        try {
-            teamService.removeTeamLeaderFromTeam(teamId);
-            return ResponseEntity.ok("Team leader removed successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing team leader: " + e.getMessage());
         }
     }
 

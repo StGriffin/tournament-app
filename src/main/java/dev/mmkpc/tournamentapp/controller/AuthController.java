@@ -57,7 +57,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequestDTO registerRequestDTO) {
         if (userRepository.existsByuserName(registerRequestDTO.getUserName())) {
-            return ResponseEntity.badRequest().body(new MessageResponseDto("Error: Username is already taken!"));
+            return ResponseEntity.badRequest().body(new MessageResponseDto("Bu kullanıcı adı önceden alınmış ! Lütfen farklı bir kullanıcı adıyla üye olunuz!"));
         }
 
         User user = new User(registerRequestDTO.getUserName(), encoder.encode(registerRequestDTO.getPassword()),
@@ -67,6 +67,6 @@ public class AuthController {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponseDto("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponseDto("Üye kaydı başarıyla tamamlandı."));
     }
 }
