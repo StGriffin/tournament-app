@@ -31,8 +31,12 @@ public class TeamController {
     @PostMapping("/createTeam")
     public ResponseEntity<String> createTeam(@RequestBody Map<String, Object> requestData) {
         String teamName = (String) requestData.get("teamName");
-
-        Long teamLeadId = Long.parseLong(String.valueOf(requestData.get("teamLeadId")));
+        Long teamLeadId;
+        if (requestData.get("teamLeadId") != null) {
+            teamLeadId = Long.parseLong(requestData.get("teamLeadId").toString());
+        } else {
+            teamLeadId = null;
+        }
         try {
             teamService.createTeam(teamName,teamLeadId);
             return ResponseEntity.ok("Takım başarıyla oluşturuldu");

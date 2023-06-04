@@ -137,34 +137,36 @@ public class TeamService {
         List<Long> playerIds = teamUpdateDto.getPlayerIds();
 
 
+
         team.setName((teamName));
-        Optional<User> userTeamLead = userRepository.findById(teamLeadId);
-        TeamLeader newTeamLead = new TeamLeader();
-        if (userTeamLead.isPresent()) {
-            if (userTeamLead.get().getRole() != Role.SISTEM_YONETICISI) {
-                userTeamLead.get().setRole(Role.TAKIM_SORUMLUSU);
-            }
+        if(teamLeadId!=null) {
+            Optional<User> userTeamLead = userRepository.findById(teamLeadId);
+            TeamLeader newTeamLead = new TeamLeader();
+            if (userTeamLead.isPresent()) {
+                if (userTeamLead.get().getRole() != Role.SISTEM_YONETICISI) {
+                    userTeamLead.get().setRole(Role.TAKIM_SORUMLUSU);
+                }
 
-            newTeamLead.setUser(userTeamLead.get());
-            teamLeaderRepository.save(newTeamLead);
-            team.setTeamLeader(newTeamLead);
-            userRepository.save(userTeamLead.get());
-        }
-
-
-        List<TeamPlayer> teamPlayers = new ArrayList<>();
-        for (Long playerId : playerIds) {
-            Optional<User> user = userRepository.findById(playerId);
-            if (user.isPresent()) {
-                TeamPlayer teamPlayer = new TeamPlayer();
-                teamPlayer.setUser(user.get());
-                teamPlayers.add(teamPlayer);
-                teamPlayerRepository.save(teamPlayer);
-
-
+                newTeamLead.setUser(userTeamLead.get());
+                teamLeaderRepository.save(newTeamLead);
+                team.setTeamLeader(newTeamLead);
+                userRepository.save(userTeamLead.get());
             }
         }
-        team.setPlayers(teamPlayers);
+        if(!playerIds.isEmpty()) {
+            List<TeamPlayer> teamPlayers = new ArrayList<>();
+            for (Long playerId : playerIds) {
+                Optional<User> user = userRepository.findById(playerId);
+                if (user.isPresent()) {
+                    TeamPlayer teamPlayer = new TeamPlayer();
+                    teamPlayer.setUser(user.get());
+                    teamPlayers.add(teamPlayer);
+                    teamPlayerRepository.save(teamPlayer);
+                }
+            }
+            team.setPlayers(teamPlayers);
+        }
+
         teamRepository.save(team);
     }
 }

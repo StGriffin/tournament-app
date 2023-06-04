@@ -25,17 +25,17 @@ public class Standings {
     private Team team;
 
     @Column(name = "MATCHES_PLAYED")
-    private int matchesPlayed;
+    private Integer matchesPlayed;
 
     @Column(name = "GOALS_SCORED")
-    private int goalsScored;
+    private Integer goalsScored;
 
     @Column(name = "GOALS_CONCEDED")
-    private int goalsConceded;
+    private Integer goalsConceded;
 
     @Column(name = "GOAL_DIFFERENCE")
-    private int goalDifference;
+    private Integer goalDifference;
 
     @Column(name = "POINTS")
-    private int points;
+    private Integer points;
 }

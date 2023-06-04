@@ -23,7 +23,7 @@ public class TeamPlayer {
     private User user;
 
     @Column(name = "JERSEY_NUMBER")
-    private int jerseyNumber;
+    private Integer jerseyNumber;
 
 
 }

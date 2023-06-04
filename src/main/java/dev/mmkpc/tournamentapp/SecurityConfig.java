@@ -80,6 +80,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/test/**").permitAll()
                                 .requestMatchers("/api/tournaments/**").permitAll()
                                 .requestMatchers("/api/teams/**").permitAll()
+                                .requestMatchers("/api/matches/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

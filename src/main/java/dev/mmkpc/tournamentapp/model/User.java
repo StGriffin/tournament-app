@@ -1,5 +1,6 @@
 package dev.mmkpc.tournamentapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.List;
         @Column(name = "USERNAME",unique = true)
         private String userName;
 
+        @JsonIgnore
         @Column(name = "PASSWORD")
         private String password;
 
