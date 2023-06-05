@@ -4,8 +4,9 @@ import dev.mmkpc.tournamentapp.model.Standings;
 import dev.mmkpc.tournamentapp.repository.StandingsRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-@CrossOrigin(origins = "http://localhost:8081")
+import java.util.List;
+
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/standings")
 public class StandingsController {
@@ -17,7 +18,7 @@ public class StandingsController {
     }
 
     @GetMapping
-    public Optional<Standings> getStandingsByTournamentId(@RequestParam Long tournamentId) {
-        return standingsRepository.findById(tournamentId);
+    public List<Standings> getStandingsByTournamentId(@RequestParam("tournamentId") Long tournamentId) {
+        return standingsRepository.findByTournamentId(tournamentId);
     }
 }

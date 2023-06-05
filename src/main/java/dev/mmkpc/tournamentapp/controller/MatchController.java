@@ -1,5 +1,7 @@
 package dev.mmkpc.tournamentapp.controller;
 
+import dev.mmkpc.tournamentapp.dto.MatchResultDto;
+import dev.mmkpc.tournamentapp.dto.MathCreationRequestDto;
 import dev.mmkpc.tournamentapp.model.Match;
 import dev.mmkpc.tournamentapp.service.MatchService;
 import org.springframework.http.HttpStatus;
@@ -21,9 +23,9 @@ public class MatchController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createMatches(@RequestBody List<Long> teamIds) {
+    public ResponseEntity<?> createMatches(@RequestBody MathCreationRequestDto mathCreationRequestDto) {
         try {
-            matchService.createMatches(teamIds);
+            matchService.createMatches(mathCreationRequestDto);
             return ResponseEntity.ok("Maçlar oluşturuldu.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Maçlar oluşturulamadı.");
@@ -37,6 +39,16 @@ public class MatchController {
             return ResponseEntity.ok(matches);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to retrieve matches: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<?> saveMatchResult(@RequestBody MatchResultDto matchResultDto) {
+        try {
+            matchService.saveMatchResult(matchResultDto.getMatchId(), matchResultDto.getResult());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

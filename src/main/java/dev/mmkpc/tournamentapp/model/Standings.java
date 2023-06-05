@@ -1,5 +1,7 @@
 package dev.mmkpc.tournamentapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,26 +18,36 @@ public class Standings {
     @Column(name = "STANDINGS_ID")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TOURNAMENT_ID")
     private Tournament tournament;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
     @Column(name = "MATCHES_PLAYED")
-    private Integer matchesPlayed;
+    private int matchesPlayed;
+
+    @Column(name = "MATCHES_WIN")
+    private int wins;
+
+    @Column(name = "MATCHES_LOSE")
+    private int losses;
+
+    @Column(name = "MATCHES_DRAW")
+    private int draws;
 
     @Column(name = "GOALS_SCORED")
-    private Integer goalsScored;
+    private int goalsScored;
 
     @Column(name = "GOALS_CONCEDED")
-    private Integer goalsConceded;
+    private int goalsConceded;
 
     @Column(name = "GOAL_DIFFERENCE")
-    private Integer goalDifference;
+    private int goalDifference;
 
     @Column(name = "POINTS")
-    private Integer points;
+    private int points;
 }

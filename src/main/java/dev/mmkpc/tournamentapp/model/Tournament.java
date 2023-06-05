@@ -34,6 +34,9 @@ public class Tournament {
     @Column(name = "TEAM_PLAYER_COUNT")
     private int teamPlayerCount;
 
+    @Column(name = "IS_ACTIVE")
+    private boolean isActive = false;
+
     public Tournament(int year, Branch branch, List<Team> teams, int teamPlayerCount) {
         this.year = year;
         this.branch = branch;
