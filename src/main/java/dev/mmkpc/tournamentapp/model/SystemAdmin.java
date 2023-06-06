@@ -28,5 +28,4 @@ public class SystemAdmin {
     @JoinColumn(name = "TEAM_LEADER_ID")
     private TeamLeader teamLeader;
 
-    // Getter ve Setter metotları
 }

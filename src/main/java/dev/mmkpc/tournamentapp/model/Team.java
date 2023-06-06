@@ -1,9 +1,7 @@
 package dev.mmkpc.tournamentapp.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.List;
 

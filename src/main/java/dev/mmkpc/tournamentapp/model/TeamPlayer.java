@@ -1,6 +1,5 @@
 package dev.mmkpc.tournamentapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -38,7 +38,7 @@ public class MatchController {
             List<Match> matches = matchService.getMatchesByTournament(tournamentId);
             return ResponseEntity.ok(matches);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Failed to retrieve matches: " + e.getMessage());
+            return ResponseEntity.status(500).body("Maçlar çekilemedi: " + e.getMessage());
         }
     }
 

@@ -52,7 +52,7 @@ public class TeamController {
             List<UserDto> candidateTeamLeaders = teamService.getCandidateTeamLeaders();
             return ResponseEntity.ok(candidateTeamLeaders);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting candidate team leaders: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Takım lideri olabilecek kişiler listesi getirilemedi: " + e.getMessage());
         }
     }
 

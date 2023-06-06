@@ -1,5 +1,3 @@
-// UserDTO.java
-
 package dev.mmkpc.tournamentapp.dto;
 
 import lombok.AllArgsConstructor;
