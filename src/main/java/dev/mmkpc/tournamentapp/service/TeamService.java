@@ -119,7 +119,7 @@ public class TeamService {
                 .collect(Collectors.toList());
 
         List<User> candidateTeamLeaders = userRepository.findAll().stream()
-                .filter(user -> !existingTeamLeaders.contains(user) && user.getRole() != Role.SISTEM_YONETICISI)
+                .filter(user -> !existingTeamLeaders.contains(user))
                 .collect(Collectors.toList());
 
         return candidateTeamLeaders.stream()
